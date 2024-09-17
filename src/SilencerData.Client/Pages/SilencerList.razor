@@ -50,13 +50,23 @@
         will-change: transform;
         backface-visibility: hidden;
     }
+    /* Subtle transition for Search Input */
+    .search-input {
+        transition: box-shadow 0.2s ease;
+    }
+
+    .search-input:focus {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
 </style>
 
   <MudPaper Class="pa-md-4 fade-in contain-paint">
     <MudDataGrid @ref="_dataGrid"
                 T="Silencer"
                 ServerData="ServerReload"
-                Filterable="false"
+                Filterable="true"
+                Hideable="true"
                 Elevation="0"
                 Dense="true"
                 Hover="true"
@@ -65,7 +75,10 @@
                 Virtualize="true"
                 ItemSize="48"
                 FixedHeader="true"
+                ShowMenuIcon="false"
+                ColumnsPanelReordering="true"
                 LoadingProgressColor="Color.Tertiary"
+
                 Class="optimize-scroll">
         <LoadingContent>
             <MudStack>
@@ -77,20 +90,20 @@
         </LoadingContent>
         <ToolBarContent>
             <MudText Typo="Typo.h6">Silencers</MudText>
-            <MudSpacer />
             <MudTextField @bind-Value="searchString"
                           Placeholder="Search"
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search"
-                          AdornmentColor="Color.Secondary"
                           IconSize="Size.Medium"
-                          Class="px-2 pb-4 search-input"
+                          Class="px-4 pb-1 search-input"
                           T="string"
                           Margin="Margin.Dense"
                           Immediate="false"
                           DebounceInterval="300"
                           OnDebounceIntervalElapsed="OnSearch">
             </MudTextField>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" OnClick="@ShowDataGridMenu"/>
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x.Manufacturer" />
@@ -116,7 +129,7 @@
                     <MudLink Href="@context.Item.Webpage" Target="_blank">Link</MudLink>
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="PEW Science Page(s) (If applicable)">
+            <TemplateColumn Title="PEW Science">
                 <CellTemplate>
                     @if (!string.IsNullOrEmpty(context.Item.PewSciencePagesIfApplicable))
                     {
@@ -218,5 +231,9 @@
     {
         searchString = text;
         return _dataGrid.ReloadServerData();
+    }
+    private void ShowDataGridMenu()
+    {
+        _dataGrid.ShowColumnsPanel();
     }
 }
