@@ -1,0 +1,22 @@
+﻿@inject ThemeState ThemeState
+
+<MudToggleIconButton Toggled="@IsDarkMode"
+                     ToggledChanged="@OnToggledChanged"
+                     Icon="@Icons.Material.Filled.DarkMode"
+                     ToggledIcon="@Icons.Material.Filled.LightMode"
+                     Color="@Color.Inherit"
+                     ToggledColor="@Color.Inherit"
+                     Edge="Edge.False" />
+
+@code {
+    [Parameter]
+    public bool IsDarkMode { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ToggledChanged { get; set; }
+
+    private async Task OnToggledChanged(bool toggled)
+    {
+        await ToggledChanged.InvokeAsync(toggled);
+    }
+}

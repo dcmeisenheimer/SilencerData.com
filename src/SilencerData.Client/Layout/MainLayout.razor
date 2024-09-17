@@ -1,6 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using SilencerData.Client.Pages.Components
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject ThemeState ThemeState
 
-<MudThemeProvider />
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" Theme="@theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -15,9 +18,14 @@
         {
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         }
+        <MudSpacer />
+            
+        <div class="mx-2">
+            <DarkModeToggle IsDarkMode="@_isDarkMode" ToggledChanged="@OnDarkModeToggled" />
+        </div>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
+        @* <NavMenu/> *@
     </MudDrawer>
     <MudMainContent Class="mt-16 pa-4">
         <MudContainer MaxWidth="MaxWidth.False">
@@ -28,10 +36,63 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
+    private MudTheme theme = Theme.Default;
+    private MudThemeProvider _mudThemeProvider { get; set; } = default!;
 
-    void DrawerToggle()
+    private bool _drawerOpen = true;
+    private bool _isDarkMode;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            // Retrieve the system's dark mode preference
+            bool systemPreference = await _mudThemeProvider.GetSystemPreference();
+
+            // Retrieve the user's stored preference from local storage
+            string userPreference = await ThemeState.GetUserPreferenceAsync();
+
+            // If the user has a stored preference, use it; otherwise, use the system preference
+            _isDarkMode = userPreference == ThemeState.DarkMode || (userPreference == ThemeState.SystemMode && systemPreference);
+
+            // Update the user's preference in local storage to match the current state
+            await ThemeState.SetUserPreferenceAsync(_isDarkMode ? ThemeState.DarkMode : ThemeState.LightMode);
+
+            StateHasChanged();
+
+            // Watch for changes in the system's dark mode preference
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+
+        }
+    }
+    private async Task OnSystemPreferenceChanged(bool newValue)
+    {
+        // Update the _isDarkMode parameter when the system preference changes
+        _isDarkMode = newValue;
+
+        // Update the user's preference in local storage only if it's set to "system"
+        string userPreference = await ThemeState.GetUserPreferenceAsync();
+        if (userPreference == ThemeState.SystemMode)
+        {
+            await ThemeState.SetUserPreferenceAsync(_isDarkMode ? ThemeState.DarkMode : ThemeState.LightMode);
+        }
+
+        StateHasChanged();
+    }
+    private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+    private async Task OnDarkModeToggled(bool isDarkMode)
+    {
+        _isDarkMode = isDarkMode;
+        await ThemeState.ToggleDarkModeAsync(_isDarkMode);
+        StateHasChanged();
     }
 }
