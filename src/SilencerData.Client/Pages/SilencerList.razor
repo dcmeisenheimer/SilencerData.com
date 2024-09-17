@@ -1,0 +1,121 @@
+﻿@page "/silencers"
+@inject ISilencerDataService SilencerDataService
+
+<style>
+    /* Simplified fade-in animation */
+    @@keyframes simpleFadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .fade-in {
+        animation: simpleFadeIn 0.3s ease-out;
+    }
+
+    /* Subtle hover effect for table rows */
+    .mud-table-row:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+        transition: background-color 0.2s ease;
+    }
+
+    /* Animated Loading State */
+    @@keyframes shimmer {
+        0% {
+            background-position: -468px 0;
+        }
+
+        100% {
+            background-position: 468px 0;
+        }
+    }
+
+    .loading-row {
+        animation: shimmer 1.5s infinite linear;
+        background: linear-gradient( to right, var(--mud-palette-background) 0%, var(--mud-palette-table-lines) 50%, var(--mud-palette-background) 100% );
+        background-size: 800px 104px;
+        opacity: 0.7; /* Adjust for subtlety */
+    }
+
+    /* CSS containment for better performance */
+    .contain-paint {
+        contain: paint;
+    }
+
+    /* Optimize scrolling performance */
+    .optimize-scroll {
+        will-change: transform;
+        backface-visibility: hidden;
+    }
+</style>
+
+  <MudPaper Class="pa-4 fade-in contain-paint">
+    <MudDataGrid 
+        Items="@_silencers"
+                Elevation="0"
+                Dense="true"
+                Hover="true"
+                Bordered="true"
+                Striped="false"
+                Virtualize="true"
+                ItemSize="48"
+                FixedHeader="true"
+                LoadingProgressColor="Color.Tertiary"
+                Class="optimize-scroll">
+        <LoadingContent>
+            <MudStack>
+                @for (int i = 0; i < _pageSizeOption[0]; i++)
+                {
+                    <div class="loading-row" style="height: 48px;"></div>
+                }
+            </MudStack>
+        </LoadingContent>
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Silencers</MudText>
+            @* <MudSpacer />
+            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Manufacturer" />
+            <PropertyColumn Property="x => x.Model" />
+            <PropertyColumn Property="x => x.MSRP" />
+            <PropertyColumn Property="x => x.LengthIn" Title="Length (in)" />
+            <PropertyColumn Property="x => x.DiameterIn" Title="Diameter (in)" />
+            <PropertyColumn Property="x => x.WeightOz" Title="Weight (oz)" />
+            <PropertyColumn Property="x => x.TubeMaterial" Title="Tube Material" />
+            <PropertyColumn Property="x => x.Color" />
+            <PropertyColumn Property="x => x.Caliber" />
+            <PropertyColumn Property="x => x.Mount" />
+            <PropertyColumn Property="x => x.FullAutoRated" Title="Full Auto Rated"/>
+            <PropertyColumn Property="x => x.BarrelLengthRestrictions" Title="Barrel Length Restrictions" />
+            <PropertyColumn Property="x => x.MagnumRated" Title="Magnum Rated" />
+            <PropertyColumn Property="x => x.PistonCompatible" Title="Piston Compatible" />
+            <PropertyColumn Property="x => x.Class" />
+            <PropertyColumn Property="x => x.ShortestModularLength" Title="Shortest Modular Length" />
+            <PropertyColumn Property="x => x.BaffleTypecount" Title="Baffle Type/Count" />
+            <PropertyColumn Property="x => x.AdditionalNotes" Title="Additional Notes" />
+            <PropertyColumn Property="x => x.Webpage" Title="Webpage" />
+            <PropertyColumn Property="x => x.PewSciencePagesIfApplicable" Title="PEW Science Page(s) (If applicable)" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Silencer" />
+        </PagerContent>
+        
+    </MudDataGrid>
+</MudPaper>
+
+@code {
+    private IEnumerable<Silencer> _silencers = new List<Silencer>();
+    private readonly int[] _pageSizeOption = { 25, 50, 100 };
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _silencers = await SilencerDataService.GetSilencerDataAsync();
+    }
+}
