@@ -54,8 +54,10 @@
 </style>
 
   <MudPaper Class="pa-4 fade-in contain-paint">
-    <MudDataGrid 
-        Items="@_silencers"
+    <MudDataGrid @ref="_dataGrid"
+                T="Silencer"
+                ServerData="ServerReload"
+                Filterable="false"
                 Elevation="0"
                 Dense="true"
                 Hover="true"
@@ -64,6 +66,7 @@
                 Virtualize="true"
                 ItemSize="48"
                 FixedHeader="true"
+                Height="80vh"
                 LoadingProgressColor="Color.Tertiary"
                 Class="optimize-scroll">
         <LoadingContent>
@@ -76,9 +79,20 @@
         </LoadingContent>
         <ToolBarContent>
             <MudText Typo="Typo.h6">Silencers</MudText>
-            @* <MudSpacer />
-            <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField> *@
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString"
+                          Placeholder="Search"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          AdornmentColor="Color.Secondary"
+                          IconSize="Size.Medium"
+                          Class="px-2 pb-4 search-input"
+                          T="string"
+                          Margin="Margin.Dense"
+                          Immediate="false"
+                          DebounceInterval="300"
+                          OnDebounceIntervalElapsed="OnSearch">
+            </MudTextField>
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x.Manufacturer" />
@@ -113,8 +127,11 @@
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
+        <NoRecordsContent>
+            <MudText>No matching silencers found</MudText>
+        </NoRecordsContent>
         <PagerContent>
-            <MudDataGridPager T="Silencer" />
+            <MudDataGridPager T="Silencer" PageSizeOptions="@_pageSizeOption" />
         </PagerContent>
         
     </MudDataGrid>
@@ -123,9 +140,92 @@
 @code {
     private IEnumerable<Silencer> _silencers = new List<Silencer>();
     private readonly int[] _pageSizeOption = { 25, 50, 100 };
+    private MudDataGrid<Silencer> _dataGrid = default!;
+    private string? searchString = null;
    
     protected override async Task OnInitializedAsync()
     {
         _silencers = await SilencerDataService.GetSilencerDataAsync();
+    }
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<GridData<Silencer>> ServerReload(GridState<Silencer> state)
+    {
+        IEnumerable<Silencer> data = await SilencerDataService.GetSilencerDataAsync();
+
+        // Apply search filter
+        if (!string.IsNullOrWhiteSpace(searchString))
+        {
+            data = data.Where(s =>
+                s.Manufacturer.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                s.Model.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                s.Caliber.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                s.Class.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+            );
+        }
+
+        // Apply column filters
+        foreach (var filterDefinition in state.FilterDefinitions)
+        {
+            if (filterDefinition.Column.PropertyName != null)
+            {
+                var property = typeof(Silencer).GetProperty(filterDefinition.Column.PropertyName);
+                if (property != null)
+                {
+                    data = data.Where(s =>
+                    {
+                        var value = property.GetValue(s)?.ToString();
+                        return value != null && value.Contains(filterDefinition.Value?.ToString() ?? "", StringComparison.OrdinalIgnoreCase);
+                    });
+                }
+            }
+        }
+
+        // Apply sorting
+        if (state.SortDefinitions.Any())
+        {
+            IOrderedEnumerable<Silencer>? sortedData = null;
+            foreach (var sortDefinition in state.SortDefinitions)
+            {
+                if (sortDefinition.SortBy != null)
+                {
+                    var property = typeof(Silencer).GetProperty(sortDefinition.SortBy);
+                    if (property != null)
+                    {
+                        if (sortedData == null)
+                        {
+                            sortedData = sortDefinition.Descending
+                                ? data.OrderByDescending(s => property.GetValue(s))
+                                : data.OrderBy(s => property.GetValue(s));
+                        }
+                        else
+                        {
+                            sortedData = sortDefinition.Descending
+                                ? sortedData.ThenByDescending(s => property.GetValue(s))
+                                : sortedData.ThenBy(s => property.GetValue(s));
+                        }
+                    }
+                }
+            }
+            data = sortedData ?? data;
+        }
+
+        // Apply pagination
+        var totalItems = data.Count();
+        var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize);
+
+        return new GridData<Silencer>
+            {
+                TotalItems = totalItems,
+                Items = pagedData
+            };
+    }
+
+    private Task OnSearch(string text)
+    {
+        searchString = text;
+        return _dataGrid.ReloadServerData();
     }
 }
