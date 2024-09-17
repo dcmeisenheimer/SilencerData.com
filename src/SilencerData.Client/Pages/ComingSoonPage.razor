@@ -2,13 +2,15 @@
 
 <style>
     .coming-soon-container {
-        min-height: 85vh;
+        min-height: calc(100vh - 80px);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         overflow: hidden;
         position: relative;
+        margin-top: -16px;
+        margin-bottom: -16px;
     }
 
     .logo {
@@ -37,7 +39,7 @@
     .particle {
         position: absolute;
         border-radius: 50%;
-        background: var(--mud-palette-primary-lighten);
+        /* background: var(--mud-palette-primary-lighten); */
         opacity: 0;
         animation: float linear infinite;
     }
@@ -125,19 +127,31 @@
 
     private void GenerateParticles()
     {
+        var colors = new[]
+        {
+            "--mud-palette-primary-lighten",
+            "--mud-palette-secondary-lighten",
+            "--mud-palette-tertiary-lighten",
+            "--mud-palette-info-lighten",
+            "--mud-palette-success-lighten",
+            "--mud-palette-warning-lighten",
+            "--mud-palette-error-lighten",
+            "--mud-palette-dark-lighten"
+        };
         for (int i = 0; i < 50; i++)
         {
-            particles.Add(GetParticleStyle());
+            particles.Add(GetParticleStyle(colors));
         }
     }
 
-    private string GetParticleStyle()
+    private string GetParticleStyle(string[] colors)
     {
         var size = random.Next(5, 20);
         var left = random.Next(0, 100);
         var animationDuration = random.Next(15, 30);
         var delay = random.Next(0, 15);
-        return $"width: {size}px; height: {size}px; left: {left}%; animation: float {animationDuration}s {delay}s infinite;";
+        var color = colors[random.Next(colors.Length)];
+        return $"width: {size}px; height: {size}px; left: {left}%; animation: float {animationDuration}s {delay}s infinite; background: var({color});";
     }
 
     public void Dispose()
