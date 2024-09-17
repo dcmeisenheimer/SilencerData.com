@@ -10,23 +10,23 @@
 
 <MudLayout>
     <MudAppBar>
-        @if (_drawerOpen)
+       @*  @if (_drawerOpen)
         {
             <MudIconButton Icon="@Icons.Material.Filled.Close" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         }
         else
         {
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        }
+        } *@
         <MudSpacer />
             
         <div class="mx-2">
             <DarkModeToggle IsDarkMode="@_isDarkMode" ToggledChanged="@OnDarkModeToggled" />
         </div>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        @* <NavMenu/> *@
-    </MudDrawer>
+    @* <MudDrawer @bind-Open="@_drawerOpen">
+        <NavMenu/>
+    </MudDrawer> *@
     <MudMainContent Class="mt-16 pa-4">
         <MudContainer MaxWidth="MaxWidth.False">
             @Body
