@@ -99,8 +99,19 @@
             <PropertyColumn Property="x => x.ShortestModularLength" Title="Shortest Modular Length" />
             <PropertyColumn Property="x => x.BaffleTypecount" Title="Baffle Type/Count" />
             <PropertyColumn Property="x => x.AdditionalNotes" Title="Additional Notes" />
-            <PropertyColumn Property="x => x.Webpage" Title="Webpage" />
-            <PropertyColumn Property="x => x.PewSciencePagesIfApplicable" Title="PEW Science Page(s) (If applicable)" />
+            <TemplateColumn Title="Webpage">
+                <CellTemplate>
+                    <MudLink Href="@context.Item.Webpage" Target="_blank">Link</MudLink>
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="PEW Science Page(s) (If applicable)">
+                <CellTemplate>
+                    @if (!string.IsNullOrEmpty(context.Item.PewSciencePagesIfApplicable))
+                    {
+                        <MudLink Href="@context.Item.PewSciencePagesIfApplicable" Target="_blank">Link</MudLink>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
         </Columns>
         <PagerContent>
             <MudDataGridPager T="Silencer" />
@@ -112,8 +123,7 @@
 @code {
     private IEnumerable<Silencer> _silencers = new List<Silencer>();
     private readonly int[] _pageSizeOption = { 25, 50, 100 };
-
-
+   
     protected override async Task OnInitializedAsync()
     {
         _silencers = await SilencerDataService.GetSilencerDataAsync();
