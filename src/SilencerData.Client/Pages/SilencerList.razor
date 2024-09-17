@@ -66,7 +66,6 @@
                 Virtualize="true"
                 ItemSize="48"
                 FixedHeader="true"
-                Height="80vh"
                 LoadingProgressColor="Color.Tertiary"
                 Class="optimize-scroll">
         <LoadingContent>
@@ -131,23 +130,16 @@
             <MudText>No matching silencers found</MudText>
         </NoRecordsContent>
         <PagerContent>
-            <MudDataGridPager T="Silencer" PageSizeOptions="@_pageSizeOption" />
+            <MudDataGridPager T="Silencer" PageSizeOptions="@_pageSizeOption" RowsPerPageString="Rows:" />
         </PagerContent>
         
     </MudDataGrid>
 </MudPaper>
 
 @code {
-    private IEnumerable<Silencer> _silencers = new List<Silencer>();
     private readonly int[] _pageSizeOption = { 25, 50, 100 };
     private MudDataGrid<Silencer> _dataGrid = default!;
     private string? searchString = null;
-   
-    protected override async Task OnInitializedAsync()
-    {
-        _silencers = await SilencerDataService.GetSilencerDataAsync();
-    }
-
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>

@@ -27,12 +27,11 @@
     @* <MudDrawer @bind-Open="@_drawerOpen">
         <NavMenu/>
     </MudDrawer> *@
-    <MudMainContent Class="mt-16 pa-4">
-        <MudContainer MaxWidth="MaxWidth.False">
+    <MudMainContent Class="d-flex flex-column" Style="min-height: 100vh;">
+        <div class="flex-grow-1 pa-4">
             @Body
-        </MudContainer>
+        </div>
     </MudMainContent>
-
 </MudLayout>
 
 @code {
