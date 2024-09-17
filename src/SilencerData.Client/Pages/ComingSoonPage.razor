@@ -1,0 +1,157 @@
+﻿@page "/comingsoon"
+
+<style>
+    .coming-soon-container {
+        min-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .logo {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+        animation: pulse 2s infinite;
+        text-align: center;
+        z-index: 1;
+    }
+
+    .countdown-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .particles-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--mud-palette-primary-lighten);
+        opacity: 0;
+        animation: float linear infinite;
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @@keyframes float {
+        0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+    }
+
+    @@media (max-width: 600px) {
+        .logo {
+            font-size: 2rem;
+        }
+        .countdown-value {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="coming-soon-container">
+    <div class="particles-container">
+        @foreach (var particle in particles)
+        {
+            <div class="particle" style="@particle"></div>
+        }
+    </div>
+    
+    <MudText Typo="Typo.h2" Class="logo" Color="Color.Primary">SilencerData.com</MudText>
+    
+    <MudGrid Justify="Justify.Center" Class="mb-8">
+        <MudItem xs="12" sm="3">
+            <MudPaper Elevation="3" Class="pa-4 text-center">
+                <div class="countdown-value mud-text-primary">@days</div>
+                <MudText>Days</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Elevation="3" Class="pa-4 text-center">
+                <div class="countdown-value mud-text-secondary">@hours</div>
+                <MudText>Hours</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Elevation="3" Class="pa-4 text-center">
+                <div class="countdown-value mud-text-info">@minutes</div>
+                <MudText>Minutes</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="3">
+            <MudPaper Elevation="3" Class="pa-4 text-center">
+                <div class="countdown-value mud-text-success">@seconds</div>
+                <MudText>Seconds</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+    
+    <MudText Typo="Typo.h5" Class="mb-4" Align="Align.Center">We're launching soon!</MudText>
+    <MudText Typo="Typo.body1" Class="mb-8" Align="Align.Center">Stay tuned for something amazing.</MudText>
+</MudContainer>
+
+@code {
+    private int days, hours, minutes, seconds;
+    private System.Threading.Timer? timer;
+    private List<string> particles = new List<string>();
+    private Random random = new Random();
+
+    protected override void OnInitialized()
+    {
+        SetCountdown();
+        GenerateParticles();
+        timer = new System.Threading.Timer(_ =>
+        {
+            SetCountdown();
+            InvokeAsync(StateHasChanged);
+        }, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+    }
+
+    private void GenerateParticles()
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            particles.Add(GetParticleStyle());
+        }
+    }
+
+    private string GetParticleStyle()
+    {
+        var size = random.Next(5, 20);
+        var left = random.Next(0, 100);
+        var animationDuration = random.Next(15, 30);
+        var delay = random.Next(0, 15);
+        return $"width: {size}px; height: {size}px; left: {left}%; animation: float {animationDuration}s {delay}s infinite;";
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+    private void SetCountdown()
+    {
+        var launchDate = new DateTime(2024, 9, 20); // Set your launch date here
+        var timeLeft = launchDate - DateTime.Now;
+        days = timeLeft.Days;
+        hours = timeLeft.Hours;
+        minutes = timeLeft.Minutes;
+        seconds = timeLeft.Seconds;
+    }
+}
