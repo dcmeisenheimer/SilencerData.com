@@ -121,7 +121,7 @@ code {
     }
 }
 
-@keyframes simpleFadeIn {
+                 @keyframes simpleFadeIn {
     from {
         opacity: 0;
     }

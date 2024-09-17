@@ -95,7 +95,7 @@ namespace SilencerData.Client.Models
                 DrawerBackground = "#222222",     // Slightly lighter than background
                 AppbarBackground = "#333333",     // Brand color: Darker Gray
                 AppbarText = "#ffffff",           // Brand color: White
-                Primary = "#717171",              // Brand color: Medium Gray
+                Primary = "#ffffff",              // Brand color: Medium Gray
                 Secondary = "#525252",            // Brand color: Dark Gray
                 Tertiary = "#B0B0B0",             // New Silencer color for dark mode
                 Info = "#7AAAFF",                 // Lighter blue for better contrast in dark mode
