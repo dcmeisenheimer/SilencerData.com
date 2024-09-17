@@ -62,7 +62,7 @@
                 ItemSize="48"
                 FixedHeader="true"
                 ShowMenuIcon="false"
-                ColumnsPanelReordering="false"
+                ColumnsPanelReordering="true"
                 LoadingProgressColor="Color.Tertiary"
 
                 Class="optimize-scroll">
@@ -88,8 +88,10 @@
                           DebounceInterval="300"
                           OnDebounceIntervalElapsed="OnSearch">
             </MudTextField>
-            <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" OnClick="@ShowDataGridMenu"/>
+            <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" OnClick="@ShowDataGridMenu"/>
+            </MudHidden>
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x.Manufacturer" />

@@ -105,7 +105,7 @@ namespace SilencerData.Client.Models
                 TextPrimary = "#ffffff",          // Brand color: White
                 TextSecondary = "#B0B0B0",        // New Silencer color for secondary text
                 TextDisabled = "#717171",         // Brand color: Medium Gray
-                ActionDefault = "#525252",        // Brand color: Dark Gray
+                ActionDefault = "#B0B0B0",        // Brand color: Dark Gray
                 ActionDisabled = "#333333",       // Brand color: Darker Gray
                 ActionDisabledBackground = "#222222", // Slightly lighter than background
                 Dark = "#ffffff",                 // Brand color: White (for contrast)
