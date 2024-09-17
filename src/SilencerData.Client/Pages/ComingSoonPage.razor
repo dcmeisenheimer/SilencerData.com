@@ -1,4 +1,5 @@
 ﻿@page "/comingsoon"
+@using SilencerData.Client.Pages.Components
 
 <style>
     .coming-soon-container {
@@ -75,8 +76,9 @@
         }
     </div>
     
-    <MudText Typo="Typo.h2" Class="logo" Color="Color.Primary">SilencerData.com</MudText>
-    
+    <div class="logo-inner" style="background: none;">
+        <SilencerDataLogo Class="logo" Width="80%" Style="max-width: 600px;" />
+    </div>
     <MudGrid Justify="Justify.Center" Class="mb-8">
         <MudItem xs="12" sm="3">
             <MudPaper Elevation="3" Class="pa-4 text-center">
