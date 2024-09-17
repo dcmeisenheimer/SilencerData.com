@@ -8,35 +8,33 @@ namespace SilencerData.Client.Models
         {
             PaletteLight = new PaletteLight()
             {
-                Background = "#EEEEEE",           // Light Gray
-                Surface = "#E0E0E0",              // Light Gray
-                DrawerBackground = "#EEEEEE",     // Light Gray
-                AppbarBackground = "#E0E0E0",     // Light Gray
-                AppbarText = "#121212",           // Very Dark Gray
-                Primary = "#7A1712",              // Bright Red
-                Secondary = "#584428",            // Warm Brown // Updated to meet 7.0 contrast ratio
-                Tertiary = "#B07306",             // Amber // Updated to meet 3.0 contrast ratio
-                Info = "#1565C0",                 // Blue
-                Success = "#2E7D32",              // Green
-                Warning = "#D55A13",              // Orange // #D55A13 to meet 3.0 contrast ratio
-                Error = "#B71C1C",                // Dark Red
-                TextPrimary = "#121212",          // Very Dark Gray
-                TextSecondary = "#1E1E1E",        // Dark Gray
-                TextDisabled = "#545454",         // Dark Gray
-                ActionDefault = "#7A1712",        // Bright Red
-                ActionDisabled = "#616161",       // Dark Gray
-                ActionDisabledBackground = "#E0E0E0", // Light Gray
-                GrayLight = "#BDBDBD",            // Light Gray
-                GrayLighter = "#E0E0E0",          // Lighter Gray
-                GrayDark = "#616161",             // Dark Gray
-                GrayDarker = "#545454",           // Dark Gray
-                GrayDefault = "#9E9E9E",          // Default Gray
-                OverlayLight = "rgba(0,0,0,0.05)", // Light overlay (reduced opacity)
-                OverlayDark = "rgba(0,0,0,0.3)",   // Dark overlay (reduced opacity)
-                Dark = "#1E1E1E", // Changed to Dark Palette Surface Color  
-                DarkContrastText = "#FFFFFF", // Matched all the other color contrast text
-                TableStriped = "BDBDBD",
-                TableLines = "BDBDBD"
+                Background = "#EEEEEE",           // Brand color: White
+                Surface = "#ffffff",              // Brand color: White
+                DrawerBackground = "#f5f5f5",     // Slightly off-white for contrast
+                AppbarBackground = "#ffffff",     // Brand color: White
+                AppbarText = "#151515",           // Brand color: Very Dark Gray
+                Primary = "#717171",              // Brand color: Medium Gray
+                Secondary = "#525252",            // Brand color: Dark Gray
+                Tertiary = "#333333",             // Brand color: Darker Gray
+                Info = "#1565C0",                 // Keep original blue for info
+                Success = "#2E7D32",              // Keep original green for success
+                Warning = "#D55A13",              // Keep original orange for warning
+                Error = "#B71C1C",                // Keep original red for error
+                TextPrimary = "#151515",          // Brand color: Very Dark Gray
+                TextSecondary = "#333333",        // Brand color: Darker Gray
+                TextDisabled = "#717171",         // Brand color: Medium Gray
+                ActionDefault = "#525252",        // Brand color: Dark Gray
+                ActionDisabled = "#717171",       // Brand color: Medium Gray
+                ActionDisabledBackground = "#f5f5f5", // Slightly off-white
+                Dark = "#333333",                 // Brand color: Darker Gray
+                DarkContrastText = "#ffffff",     // Brand color: White
+                GrayLight = "#f5f5f5",            // Slightly off-white
+                GrayLighter = "#fafafa",          // Very light gray
+                GrayDark = "#525252",             // Brand color: Dark Gray
+                GrayDarker = "#333333",           // Brand color: Darker Gray
+                GrayDefault = "#717171",          // Brand color: Medium Gray
+                OverlayLight = "rgba(255,255,255,0.1)",
+                OverlayDark = "rgba(0,0,0,0.2)"
                 //Light Mode Palette Contrast Scores(all above 7:1 against both background and surface):
 
                 //Background(#EEEEEE) and TextPrimary (#121212): 15.8:1
@@ -92,33 +90,33 @@ namespace SilencerData.Client.Models
             },
             PaletteDark = new PaletteDark()
             {
-                Background = "#121212",           // Very Dark Gray
-                Surface = "#1E1E1E",              // Dark Gray
-                DrawerBackground = "#121212",     // Very Dark Gray
-                AppbarBackground = "#1E1E1E",     // Dark Gray
-                AppbarText = "#FFFFFF",           // White
-                Primary = "#FF856D",              // Bright Red // Changed to meet 7.0 contrast rating
-                Secondary = "#BEA484",            // Muted Brown
-                Tertiary = "#E19D3A",             // Muted Yellow
-                Info = "#7AAAFF",                 // Sky Blue
-                Success = "#6EBC6B",              // Muted Green
-                Warning = "#FF8A44",              // Orange
-                Error = "#EA5041",                // Bright Red
-                TextPrimary = "#FFFFFF",          // White
-                TextSecondary = "#F5F5F5",        // Light Gray
-                TextDisabled = "#BDBDBD",         // Gray
-                ActionDefault = "#FF856D",        // Bright Red
-                ActionDisabled = "#9E9E9E",       // Gray
-                ActionDisabledBackground = "#1E1E1E", // Dark Gray
-                GrayLight = "#616161",            // Dark Gray
-                GrayLighter = "#757575",          // Lighter Dark Gray
-                GrayDark = "#E0E0E0",             // Light Gray
-                GrayDarker = "#F5F5F5",           // Light Gray
-                GrayDefault = "#BDBDBD",          // Default Gray
-                OverlayLight = "rgba(255,255,255,0.1)", // Light overlay (reduced opacity)
-                OverlayDark = "rgba(0,0,0,0.3)",   // Dark overlay (reduced opacity)
-                Dark = "#E0E0E0",
-                DarkContrastText = "#000000",
+                Background = "#151515",           // Brand color: Very Dark Gray
+                Surface = "#333333",              // Brand color: Darker Gray
+                DrawerBackground = "#222222",     // Slightly lighter than background
+                AppbarBackground = "#333333",     // Brand color: Darker Gray
+                AppbarText = "#ffffff",           // Brand color: White
+                Primary = "#717171",              // Brand color: Medium Gray
+                Secondary = "#525252",            // Brand color: Dark Gray
+                Tertiary = "#B0B0B0",             // New Silencer color for dark mode
+                Info = "#7AAAFF",                 // Lighter blue for better contrast in dark mode
+                Success = "#6EBC6B",              // Lighter green for better contrast in dark mode
+                Warning = "#FF8A44",              // Lighter orange for better contrast in dark mode
+                Error = "#EA5041",                // Lighter red for better contrast in dark mode
+                TextPrimary = "#ffffff",          // Brand color: White
+                TextSecondary = "#B0B0B0",        // New Silencer color for secondary text
+                TextDisabled = "#717171",         // Brand color: Medium Gray
+                ActionDefault = "#525252",        // Brand color: Dark Gray
+                ActionDisabled = "#333333",       // Brand color: Darker Gray
+                ActionDisabledBackground = "#222222", // Slightly lighter than background
+                Dark = "#ffffff",                 // Brand color: White (for contrast)
+                DarkContrastText = "#151515",     // Brand color: Very Dark Gray
+                GrayLight = "#525252",            // Brand color: Dark Gray
+                GrayLighter = "#717171",          // Brand color: Medium Gray
+                GrayDark = "#B0B0B0",             // New Silencer color
+                GrayDarker = "#ffffff",           // Brand color: White
+                GrayDefault = "#525252",          // Brand color: Dark Gray
+                OverlayLight = "rgba(255,255,255,0.1)",
+                OverlayDark = "rgba(0,0,0,0.2)"
 
                 //Dark Mode Palette Contrast Scores(all above 7:1 against both background and surface):
 

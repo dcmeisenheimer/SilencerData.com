@@ -45,8 +45,8 @@
     }
     private async Task UpdateThemeAsync()
     {
-        SilencerColor = IsDarkMode ? "var(--mud-palette-text-disabled)" : "var(--mud-palette-text-disabled)";
-        DataColor = IsDarkMode ? "var(--mud-palette-primary)" : "var(--mud-palette-dark)";
+        SilencerColor = IsDarkMode ? "var(--mud-palette-text-secondary)" : "var(--mud-palette-gray-default)";
+        DataColor = IsDarkMode ? "var(--mud-palette-text-primary)" : "var(--mud-palette-text-primary)";
         StateHasChanged();
     }
 }

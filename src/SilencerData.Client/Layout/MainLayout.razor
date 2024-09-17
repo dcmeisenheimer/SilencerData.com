@@ -10,33 +10,39 @@
 
 <MudLayout>
     <CascadingValue Value="@_isDarkMode"> 
-    <MudAppBar>
-       @*  @if (_drawerOpen)
-        {
-            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        }
-        else
-        {
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        } *@
-        <SilencerDataLogo Width="20vw" />
-        <MudSpacer />
-        <div class="mx-2">
-            <DarkModeToggle ToggledChanged="@OnDarkModeToggled" />
-        </div>
-    </MudAppBar>
-    @* <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
-    </MudDrawer> *@
-    <MudMainContent Class="d-flex flex-column" Style="min-height: 100vh;">
-        <div class="flex-grow-1 pa-4">
-            @Body
+        <MudAppBar>
+           @*  @if (_drawerOpen)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            }
+            else
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            } *@
+            <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                <SilencerDataLogo Width="20vw" Class="fade-in breakpoint-transition" Style="max-width: 250px;"/>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+                    <SilencerDataLogo Width="35vw" Class="fade-in breakpoint-transition"  />
+            </MudHidden>
+
+            <MudSpacer />
+            <div class="mx-2">
+                <DarkModeToggle ToggledChanged="@OnDarkModeToggled" />
+            </div>
+        </MudAppBar>
+        @* <MudDrawer @bind-Open="@_drawerOpen">
+            <NavMenu/>
+        </MudDrawer> *@
+        <MudMainContent Class="d-flex flex-column" Style="min-height: 100vh;">
+            <div class="flex-grow-1 pa-4 fade-in">
+                @Body
             
-        </div>
-    </MudMainContent>
-    <MudScrollToTop>
-        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.ArrowUpward" />
-    </MudScrollToTop>
+            </div>
+        </MudMainContent>
+        <MudScrollToTop>
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.ArrowUpward" />
+        </MudScrollToTop>
     </CascadingValue>
 </MudLayout>
 

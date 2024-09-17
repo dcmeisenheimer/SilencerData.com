@@ -1,20 +1,6 @@
 ﻿@inject ISilencerDataService SilencerDataService
 
 <style>
-    /* Simplified fade-in animation */
-    @@keyframes simpleFadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    .fade-in {
-        animation: simpleFadeIn 0.3s ease-out;
-    }
 
     /* Subtle hover effect for table rows */
     .mud-table-row:hover {
@@ -95,7 +81,7 @@
                           Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search"
                           IconSize="Size.Medium"
-                          Class="px-4 pb-1 search-input"
+                          Class="px-4 pb-0 search-input"
                           T="string"
                           Margin="Margin.Dense"
                           Immediate="false"
