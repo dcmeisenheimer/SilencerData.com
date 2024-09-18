@@ -1,0 +1,229 @@
+﻿@page "/silencer-matcher"
+@using SilencerData.Client.Interfaces
+@using SilencerData.Client.Models
+@using System.ComponentModel.DataAnnotations
+@inject ISilencerDataService SilencerDataService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
+    <MudText Typo="Typo.h3" GutterBottom="true">Silencer Matcher</MudText>
+    <MudText Typo="Typo.body1" Class="mb-8">Find the perfect silencer for your needs.</MudText>
+
+    @if (isLoading)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else if (allSilencers != null)
+    {
+        <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
+            <MudGrid>
+               <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="string" Label="Caliber" Required="true" @bind-Value="preferences.Caliber" 
+                               SelectedValuesChanged="@(_ => CheckMinimumRequirements())">
+                        @foreach (var caliber in calibers)
+                        {
+                            <MudSelectItem Value="@caliber">@caliber</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="string" Label="Class" Required="true" @bind-Value="preferences.Class"
+                               SelectedValuesChanged="@(_ => CheckMinimumRequirements())">
+                        <MudSelectItem Value="@("Any")">Any</MudSelectItem>
+                        @foreach (var silencerClass in classes)
+                        {
+                            <MudSelectItem Value="@silencerClass">@silencerClass</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudNumericField @bind-Value="preferences.MinBudget"
+                                     @bind-Value:after="@CheckMinimumRequirements"
+                                     Label="Min Budget"
+                                     Variant="Variant.Outlined"
+                                     Min="0"
+                                     Max="10000" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudNumericField @bind-Value="preferences.MaxBudget"
+                                     @bind-Value:after="@CheckMinimumRequirements"
+                                     Label="Max Budget"
+                                     Variant="Variant.Outlined"
+                                     Min="0"
+                                     Max="10000" />
+                                      
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="string" Label="Manufacturer" @bind-Value="preferences.Manufacturer">
+                        <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
+                        @foreach (var manufacturer in manufacturers)
+                        {
+                            <MudSelectItem Value="@manufacturer">@manufacturer</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="string" Label="Material" @bind-Value="preferences.Material">
+                        <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
+                        @foreach (var material in materials)
+                        {
+                            <MudSelectItem Value="@material">@material</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="LengthPreference" Label="Length Preference" @bind-Value="selectedLengthPreference">
+                        <MudSelectItem Value="@LengthPreference.Any">Any</MudSelectItem>
+                        <MudSelectItem Value="@LengthPreference.Short">Short</MudSelectItem>
+                        <MudSelectItem Value="@LengthPreference.Medium">Medium</MudSelectItem>
+                        <MudSelectItem Value="@LengthPreference.Long">Long</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="WeightPreference" Label="Weight Preference" @bind-Value="selectedWeightPreference">
+                        <MudSelectItem Value="@WeightPreference.Any">Any</MudSelectItem>
+                        <MudSelectItem Value="@WeightPreference.Light">Light</MudSelectItem>
+                        <MudSelectItem Value="@WeightPreference.Medium">Medium</MudSelectItem>
+                        <MudSelectItem Value="@WeightPreference.Heavy">Heavy</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="4" md="4">
+                    <MudCheckBox @bind-Value="@preferences.FullAutoRated" Label="Full Auto Rated" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12" sm="4" md="4">
+                    <MudCheckBox @bind-Value="@preferences.MagnumRated" Label="Magnum Rated" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+                <MudItem xs="12" sm="4" md="4">
+                    <MudCheckBox @bind-Value="@preferences.PistonCompatible" Label="Piston Compatible" Color="Color.Primary"></MudCheckBox>
+                </MudItem>
+            </MudGrid>
+            @if (MinimumRequirementsMet)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-8" OnClick="FindMatches">Find Matches</MudButton>
+            }
+        </MudForm>
+
+        @if (matchingSilencers != null && matchingSilencers.Any())
+        {
+            <MudText Typo="Typo.h5" Class="mt-16 mb-4">Matching Silencers</MudText>
+            <MudTable Items="@matchingSilencers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@isLoading" LoadingProgressColor="Color.Info">
+                <HeaderContent>
+                    <MudTh>Manufacturer</MudTh>
+                    <MudTh>Model</MudTh>
+                    <MudTh>MSRP</MudTh>
+                    <MudTh>Caliber</MudTh>
+                    <MudTh>Class</MudTh>
+                    <MudTh>Length (in)</MudTh>
+                    <MudTh>Weight (oz)</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Manufacturer">@context.Manufacturer</MudTd>
+                    <MudTd DataLabel="Model">@context.Model</MudTd>
+                    <MudTd DataLabel="MSRP">@context.MSRP.ToString("C")</MudTd>
+                    <MudTd DataLabel="Caliber">@context.Caliber</MudTd>
+                    <MudTd DataLabel="Class">@context.Class</MudTd>
+                    <MudTd DataLabel="Length">@context.LengthIn</MudTd>
+                    <MudTd DataLabel="Weight">@context.WeightOz</MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+        else if (matchingSilencers != null)
+        {
+            <MudAlert Severity="Severity.Info" Class="mt-8">No matching silencers found. Try adjusting your preferences.</MudAlert>
+        }
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Error">Failed to load silencer data. Please try refreshing the page.</MudAlert>
+    }
+</MudContainer>
+
+@code {
+    private MudForm form = null!;
+    private bool isValid;
+    private string[] errors = Array.Empty<string>();
+    private bool isLoading = true;
+
+    private UserPreferences preferences = new();
+    private List<Silencer>? allSilencers;
+    private List<Silencer>? matchingSilencers;
+
+    private List<string> calibers = new();
+    private List<string> classes = new();
+    private List<string> manufacturers = new();
+    private List<string> materials = new();
+
+    private LengthPreference selectedLengthPreference = LengthPreference.Any;
+    private WeightPreference selectedWeightPreference = WeightPreference.Any;
+
+    private bool MinimumRequirementsMet { get; set; } = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var silencers = await SilencerDataService.GetSilencerDataAsync();
+            allSilencers = silencers.ToList();
+
+            calibers = allSilencers.Select(s => s.Caliber).Distinct().OrderBy(c => c).ToList();
+            classes = allSilencers.SelectMany(s => s.Class.Split(", ")).Distinct().OrderBy(c => c).ToList();
+            manufacturers = allSilencers.Select(s => s.Manufacturer).Distinct().OrderBy(m => m).ToList();
+            materials = allSilencers.Select(s => s.TubeMaterial).Distinct().OrderBy(m => m).ToList();
+            CheckMinimumRequirements();
+
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading silencer data: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void FindMatches()
+    {
+        if (isValid && allSilencers != null && MinimumRequirementsMet)
+        {
+            isLoading = true;
+            StateHasChanged();
+
+            try
+            {
+                preferences.LengthPreference = selectedLengthPreference == LengthPreference.Any ? null : selectedLengthPreference;
+                preferences.WeightPreference = selectedWeightPreference == WeightPreference.Any ? null : selectedWeightPreference;
+                var matcher = new SilencerMatcher(allSilencers);
+                matchingSilencers = matcher.FindMatches(preferences);
+
+                if (!matchingSilencers.Any())
+                {
+                    Snackbar.Add("No matching silencers found. Try adjusting your preferences.", Severity.Info);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error finding matches: {ex.Message}", Severity.Error);
+            }
+            finally
+            {
+                isLoading = false;
+                StateHasChanged();
+            }
+        }
+        else
+        {
+            Snackbar.Add("Please fill in all required fields.", Severity.Warning);
+        }
+    }
+    private void CheckMinimumRequirements()
+    {
+        MinimumRequirementsMet = !string.IsNullOrEmpty(preferences.Caliber) &&
+                                 !string.IsNullOrEmpty(preferences.Class) &&
+                                 preferences.MinBudget >= 0 &&
+                                 preferences.MaxBudget > preferences.MinBudget;
+        StateHasChanged();
+    }
+}
