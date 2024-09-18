@@ -10,6 +10,7 @@ namespace SilencerData.Client.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<SilencerDataService> _logger;
+        private IEnumerable<Silencer>? _cachedData;
 
         public SilencerDataService(HttpClient httpClient, ILogger<SilencerDataService> logger)
         {
@@ -19,6 +20,11 @@ namespace SilencerData.Client.Services
 
         public async Task<IEnumerable<Silencer>> GetSilencerDataAsync()
         {
+            if (_cachedData != null)
+            {
+                return _cachedData;
+            }
+
             try
             {
                 var options = new JsonSerializerOptions
@@ -28,13 +34,8 @@ namespace SilencerData.Client.Services
                 options.Converters.Add(new DecimalJsonConverter());
                 options.Converters.Add(new NullableDecimalJsonConverter());
 
-                var suppressors = await _httpClient.GetFromJsonAsync<IEnumerable<Silencer>>("data/silencerdata.json", options);
-                return suppressors ?? Enumerable.Empty<Silencer>();
-            }
-            catch (HttpRequestException e)
-            {
-                _logger.LogError(e, "Error fetching silencer data");
-                return Enumerable.Empty<Silencer>();
+                _cachedData = await _httpClient.GetFromJsonAsync<IEnumerable<Silencer>>("data/silencerdata.json", options);
+                return _cachedData ?? Enumerable.Empty<Silencer>();
             }
             catch (JsonException e)
             {
