@@ -5,6 +5,12 @@
 @inject ISilencerDataService SilencerDataService
 @inject ISnackbar Snackbar
 
+<style>
+    .mud-expand-panel .mud-expand-panel-header {
+        padding: 16px 0px !important;
+    }
+</style>
+
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
     <MudText Typo="Typo.h3" GutterBottom="true">Silencer Matcher</MudText>
     <MudText Typo="Typo.body1" Class="mb-8">Find the perfect silencer for your needs.</MudText>
@@ -17,7 +23,7 @@
     {
         <MudForm @ref="form" @bind-IsValid="@isValid" @bind-Errors="@errors">
             <MudGrid>
-               <MudItem xs="12" sm="6" md="4">
+               <MudItem xs="12" sm="6" md="6">
                     <MudSelect T="string" Label="Caliber" Required="true" @bind-Value="preferences.Caliber" 
                                SelectedValuesChanged="@(_ => CheckMinimumRequirements())">
                         @foreach (var caliber in calibers)
@@ -26,7 +32,7 @@
                         }
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="12" sm="6" md="4">
+                <MudItem xs="12" sm="6" md="6">
                     <MudSelect T="string" Label="Class" Required="true" @bind-Value="preferences.Class"
                                SelectedValuesChanged="@(_ => CheckMinimumRequirements())">
                         <MudSelectItem Value="@("Any")">Any</MudSelectItem>
@@ -36,7 +42,7 @@
                         }
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="12" sm="6" md="4">
+                <MudItem xs="12" sm="6" md="6">
                     <MudNumericField @bind-Value="preferences.MinBudget"
                                      @bind-Value:after="@CheckMinimumRequirements"
                                      Label="Min Budget"
@@ -44,7 +50,7 @@
                                      Min="0"
                                      Max="10000" />
                 </MudItem>
-                <MudItem xs="12" sm="6" md="4">
+                <MudItem xs="12" sm="6" md="6">
                     <MudNumericField @bind-Value="preferences.MaxBudget"
                                      @bind-Value:after="@CheckMinimumRequirements"
                                      Label="Max Budget"
@@ -53,48 +59,64 @@
                                      Max="10000" />
                                       
                 </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="string" Label="Manufacturer" @bind-Value="preferences.Manufacturer">
-                        <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
-                        @foreach (var manufacturer in manufacturers)
-                        {
-                            <MudSelectItem Value="@manufacturer">@manufacturer</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="string" Label="Material" @bind-Value="preferences.Material">
-                        <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
-                        @foreach (var material in materials)
-                        {
-                            <MudSelectItem Value="@material">@material</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="LengthPreference" Label="Length Preference" @bind-Value="selectedLengthPreference">
-                        <MudSelectItem Value="@LengthPreference.Any">Any</MudSelectItem>
-                        <MudSelectItem Value="@LengthPreference.Short">Short</MudSelectItem>
-                        <MudSelectItem Value="@LengthPreference.Medium">Medium</MudSelectItem>
-                        <MudSelectItem Value="@LengthPreference.Long">Long</MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="WeightPreference" Label="Weight Preference" @bind-Value="selectedWeightPreference">
-                        <MudSelectItem Value="@WeightPreference.Any">Any</MudSelectItem>
-                        <MudSelectItem Value="@WeightPreference.Light">Light</MudSelectItem>
-                        <MudSelectItem Value="@WeightPreference.Medium">Medium</MudSelectItem>
-                        <MudSelectItem Value="@WeightPreference.Heavy">Heavy</MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="4" md="4">
-                    <MudCheckBox @bind-Value="@preferences.FullAutoRated" Label="Full Auto Rated" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12" sm="4" md="4">
-                    <MudCheckBox @bind-Value="@preferences.MagnumRated" Label="Magnum Rated" Color="Color.Primary"></MudCheckBox>
-                </MudItem>
-                <MudItem xs="12" sm="4" md="4">
-                    <MudCheckBox @bind-Value="@preferences.PistonCompatible" Label="Piston Compatible" Color="Color.Primary"></MudCheckBox>
+                <MudItem xs="12">
+                    <MudExpansionPanel Gutters="false" Expanded="true" Style="background: var(--mud-palette-background);">
+                        <TitleContent>
+                            <MudText Typo="Typo.h6" Class="mb-n2">Additional Filters</MudText>
+                        </TitleContent>
+                        <ChildContent>
+                            <MudCard Elevation="0" Outlined="true" Class="mt-3">
+                                <MudCardContent>
+                                    <MudGrid>
+                                        <MudItem xs="12" sm="6" md="6">
+                                            <MudSelect T="string" Label="Manufacturer" @bind-Value="preferences.Manufacturer">
+                                                <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
+                                                @foreach (var manufacturer in manufacturers)
+                                                {
+                                                    <MudSelectItem Value="@manufacturer">@manufacturer</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudItem>
+                                        <MudItem xs="12" sm="6" md="6">
+                                            <MudSelect T="string" Label="Material" @bind-Value="preferences.Material">
+                                                <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
+                                                @foreach (var material in materials)
+                                                {
+                                                    <MudSelectItem Value="@material">@material</MudSelectItem>
+                                                }
+                                            </MudSelect>
+                                        </MudItem>
+                                        <MudItem xs="12" sm="6" md="6">
+                                            <MudSelect T="LengthPreference" Label="Length Preference" @bind-Value="selectedLengthPreference">
+                                                <MudSelectItem Value="@LengthPreference.Any">Any</MudSelectItem>
+                                                <MudSelectItem Value="@LengthPreference.Short">Short</MudSelectItem>
+                                                <MudSelectItem Value="@LengthPreference.Medium">Medium</MudSelectItem>
+                                                <MudSelectItem Value="@LengthPreference.Long">Long</MudSelectItem>
+                                            </MudSelect>
+                                        </MudItem>
+                                        <MudItem xs="12" sm="6" md="6">
+                                            <MudSelect T="WeightPreference" Label="Weight Preference" @bind-Value="selectedWeightPreference">
+                                                <MudSelectItem Value="@WeightPreference.Any">Any</MudSelectItem>
+                                                <MudSelectItem Value="@WeightPreference.Light">Light</MudSelectItem>
+                                                <MudSelectItem Value="@WeightPreference.Medium">Medium</MudSelectItem>
+                                                <MudSelectItem Value="@WeightPreference.Heavy">Heavy</MudSelectItem>
+                                            </MudSelect>
+                                        </MudItem>
+                                        <MudItem xs="12" sm="4" md="4">
+                                            <MudCheckBox @bind-Value="@preferences.FullAutoRated" Label="Full Auto Rated" Color="Color.Primary"></MudCheckBox>
+                                        </MudItem>
+                                        <MudItem xs="12" sm="4" md="4">
+                                            <MudCheckBox @bind-Value="@preferences.MagnumRated" Label="Magnum Rated" Color="Color.Primary"></MudCheckBox>
+                                        </MudItem>
+                                        <MudItem xs="12" sm="4" md="4">
+                                            <MudCheckBox @bind-Value="@preferences.PistonCompatible" Label="Piston Compatible" Color="Color.Primary"></MudCheckBox>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudCardContent>
+                            </MudCard>
+                        </ChildContent>
+                    </MudExpansionPanel>
+
                 </MudItem>
             </MudGrid>
             @if (MinimumRequirementsMet)
