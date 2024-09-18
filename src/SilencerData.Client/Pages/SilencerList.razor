@@ -112,16 +112,16 @@
             <PropertyColumn Property="x => x.ShortestModularLength" Title="Shortest Modular Length" />
             <PropertyColumn Property="x => x.BaffleTypecount" Title="Baffle Type/Count" />
             <PropertyColumn Property="x => x.AdditionalNotes" Title="Additional Notes" />
-            <TemplateColumn Title="Webpage">
+            <TemplateColumn Title="Product Page">
                 <CellTemplate>
-                    <MudLink Href="@context.Item.Webpage" Target="_blank">Link</MudLink>
+                    <MudLink Href="@context.Item.Webpage" Target="_blank" Color="Color.Info">Link</MudLink>
                 </CellTemplate>
             </TemplateColumn>
             <TemplateColumn Title="PEW Science">
                 <CellTemplate>
                     @if (!string.IsNullOrEmpty(context.Item.PewSciencePagesIfApplicable))
                     {
-                        <MudLink Href="@context.Item.PewSciencePagesIfApplicable" Target="_blank">Link</MudLink>
+                        <MudLink Href="@context.Item.PewSciencePagesIfApplicable" Target="_blank" Color="Color.Info">Link</MudLink>
                     }
                 </CellTemplate>
             </TemplateColumn>
