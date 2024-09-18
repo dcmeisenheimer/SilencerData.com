@@ -1,0 +1,44 @@
+﻿<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-6">
+    <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+        <MudDivider />
+        <MudGrid Class="mt-4 mb-4">
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.h6" Class="mb-4">About Us</MudText>
+                <MudText Typo="Typo.body2">SilencerData provides comprehensive information about silencers and suppressors for firearms enthusiasts and professionals.</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.h6" Class="mb-4">Quick Links</MudText>
+                <MudStack>
+                    <MudLink Href="/" Typo="Typo.body2">Home</MudLink>
+                    <MudLink Href="/silencers" Typo="Typo.body2">Silencers</MudLink>
+                    <MudLink Href="/manufacturers" Typo="Typo.body2">Manufacturers</MudLink>
+                    <MudLink Href="/about" Typo="Typo.body2">About</MudLink>
+                </MudStack>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.h6" Class="mb-4">Contact</MudText>
+                <MudStack>
+                    <MudText Typo="Typo.body2">Email: info@silencerdata.com</MudText>
+                    <MudText Typo="Typo.body2">Phone: (123) 123-4567</MudText>
+                </MudStack>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.h6" Class="mb-4">Follow Us</MudText>
+                <MudStack Row="true" Spacing="2">
+                    <MudIconButton Icon="@Icons.Custom.Brands.Facebook" Color="Color.Primary" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.Twitter" Color="Color.Primary" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.Instagram" Color="Color.Primary" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.YouTube" Color="Color.Primary" />
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudHidden>
+    <MudDivider />
+    <MudText Typo="Typo.body2" Align="Align.Center" Class="my-4">
+        © @DateTime.Now.Year SilencerData. All rights reserved.
+    </MudText>
+</MudContainer>
+
+@code {
+    // You can add any necessary code-behind logic here
+}
