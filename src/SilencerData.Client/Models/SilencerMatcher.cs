@@ -122,6 +122,25 @@ namespace SilencerData.Client.Models
                     return true;
             }
         }
+        public List<string> GetGroupedClasses()
+        {
+            return _silencers
+                .SelectMany(s => s.Class.Split(", "))
+                .Distinct()
+                .Where(c => !c.Contains("-"))
+                .OrderBy(c => c)
+                .ToList();
+        }
+
+        public List<string> GetSubClasses(string mainClass)
+        {
+            return _silencers
+                .SelectMany(s => s.Class.Split(", "))
+                .Distinct()
+                .Where(c => c.StartsWith(mainClass + "-"))
+                .OrderBy(c => c)
+                .ToList();
+        }
     }
 
     public class UserPreferences

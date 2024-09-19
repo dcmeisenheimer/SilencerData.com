@@ -33,10 +33,10 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="6" md="6">
-                    <MudSelect T="string" Label="Class" Required="true" @bind-Value="preferences.Class"
-                               SelectedValuesChanged="@(_ => CheckMinimumRequirements())">
+                    <MudSelect T="string" Label="Class" Required="true" @bind-Value="selectedClass"
+                               SelectedValuesChanged="@(async _ => await OnClassSelectionChanged())">
                         <MudSelectItem Value="@("Any")">Any</MudSelectItem>
-                        @foreach (var silencerClass in classes)
+                        @foreach (var silencerClass in groupedClasses)
                         {
                             <MudSelectItem Value="@silencerClass">@silencerClass</MudSelectItem>
                         }
@@ -46,6 +46,7 @@
                     <MudNumericField @bind-Value="preferences.MinBudget"
                                      @bind-Value:after="@CheckMinimumRequirements"
                                      Label="Min Budget"
+                                     Format="C"
                                      Variant="Variant.Outlined"
                                      Min="0"
                                      Max="10000" />
@@ -54,75 +55,91 @@
                     <MudNumericField @bind-Value="preferences.MaxBudget"
                                      @bind-Value:after="@CheckMinimumRequirements"
                                      Label="Max Budget"
+                                     Format="C"
                                      Variant="Variant.Outlined"
                                      Min="0"
                                      Max="10000" />
                                       
                 </MudItem>
-                <MudItem xs="12">
-                    <MudExpansionPanel Gutters="false" Expanded="true" Style="background: var(--mud-palette-background);">
-                        <TitleContent>
-                            <MudText Typo="Typo.h6" Class="mb-n2">Additional Filters</MudText>
-                        </TitleContent>
-                        <ChildContent>
-                            <MudCard Elevation="0" Outlined="true" Class="mt-3">
-                                <MudCardContent>
-                                    <MudGrid>
-                                        <MudItem xs="12" sm="6" md="6">
-                                            <MudSelect T="string" Label="Manufacturer" @bind-Value="preferences.Manufacturer">
-                                                <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
-                                                @foreach (var manufacturer in manufacturers)
-                                                {
-                                                    <MudSelectItem Value="@manufacturer">@manufacturer</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                        </MudItem>
-                                        <MudItem xs="12" sm="6" md="6">
-                                            <MudSelect T="string" Label="Material" @bind-Value="preferences.Material">
-                                                <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
-                                                @foreach (var material in materials)
-                                                {
-                                                    <MudSelectItem Value="@material">@material</MudSelectItem>
-                                                }
-                                            </MudSelect>
-                                        </MudItem>
-                                        <MudItem xs="12" sm="6" md="6">
-                                            <MudSelect T="LengthPreference" Label="Length Preference" @bind-Value="selectedLengthPreference">
-                                                <MudSelectItem Value="@LengthPreference.Any">Any</MudSelectItem>
-                                                <MudSelectItem Value="@LengthPreference.Short">Short</MudSelectItem>
-                                                <MudSelectItem Value="@LengthPreference.Medium">Medium</MudSelectItem>
-                                                <MudSelectItem Value="@LengthPreference.Long">Long</MudSelectItem>
-                                            </MudSelect>
-                                        </MudItem>
-                                        <MudItem xs="12" sm="6" md="6">
-                                            <MudSelect T="WeightPreference" Label="Weight Preference" @bind-Value="selectedWeightPreference">
-                                                <MudSelectItem Value="@WeightPreference.Any">Any</MudSelectItem>
-                                                <MudSelectItem Value="@WeightPreference.Light">Light</MudSelectItem>
-                                                <MudSelectItem Value="@WeightPreference.Medium">Medium</MudSelectItem>
-                                                <MudSelectItem Value="@WeightPreference.Heavy">Heavy</MudSelectItem>
-                                            </MudSelect>
-                                        </MudItem>
-                                        <MudItem xs="12" sm="4" md="4">
-                                            <MudCheckBox @bind-Value="@preferences.FullAutoRated" Label="Full Auto Rated" Color="Color.Primary"></MudCheckBox>
-                                        </MudItem>
-                                        <MudItem xs="12" sm="4" md="4">
-                                            <MudCheckBox @bind-Value="@preferences.MagnumRated" Label="Magnum Rated" Color="Color.Primary"></MudCheckBox>
-                                        </MudItem>
-                                        <MudItem xs="12" sm="4" md="4">
-                                            <MudCheckBox @bind-Value="@preferences.PistonCompatible" Label="Piston Compatible" Color="Color.Primary"></MudCheckBox>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudCardContent>
-                            </MudCard>
-                        </ChildContent>
-                    </MudExpansionPanel>
+                @if(MinimumRequirementsMet)
+                {
+                    <MudItem xs="12">
+                        <MudExpansionPanel Gutters="false" Expanded="false" Style="background: var(--mud-palette-background);">
+                            <TitleContent>
+                                <MudText Typo="Typo.h6" Class="mb-n2">Additional Filters</MudText>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudCard Elevation="0" Outlined="true" Class="mt-3">
+                                    <MudCardContent>
+                                        <MudGrid>
+                                            <MudItem xs="12" sm="6" md="6">
+                                                <MudSelect T="string" Label="Manufacturer" @bind-Value="preferences.Manufacturer">
+                                                    <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
+                                                    @foreach (var manufacturer in manufacturers)
+                                                    {
+                                                        <MudSelectItem Value="@manufacturer">@manufacturer</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            </MudItem>
+                                            @if (subClasses.Any())
+                                            {
+                                                <MudItem xs="12" sm="6" md="6">
+                                                    <MudSelect T="string" Label="Sub-Class" @bind-Value="preferences.Class"
+                                                               SelectedValuesChanged="@(_ => CheckMinimumRequirements())">
+                                                        <MudSelectItem Value="@selectedClass">@selectedClass (Default)</MudSelectItem>
+                                                        @foreach (var subClass in subClasses)
+                                                        {
+                                                            <MudSelectItem Value="@subClass">@subClass</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudItem>
+                                            }
+                                            <MudItem xs="12" sm="6" md="6">
+                                                <MudSelect T="string" Label="Material" @bind-Value="preferences.Material">
+                                                    <MudSelectItem Value="@((string?)null)">Any</MudSelectItem>
+                                                    @foreach (var material in materials)
+                                                    {
+                                                        <MudSelectItem Value="@material">@material</MudSelectItem>
+                                                    }
+                                                </MudSelect>
+                                            </MudItem>
+                                            <MudItem xs="12" sm="6" md="6">
+                                                <MudSelect T="LengthPreference" Label="Length Preference" @bind-Value="selectedLengthPreference">
+                                                    <MudSelectItem Value="@LengthPreference.Any">Any</MudSelectItem>
+                                                    <MudSelectItem Value="@LengthPreference.Short">Short</MudSelectItem>
+                                                    <MudSelectItem Value="@LengthPreference.Medium">Medium</MudSelectItem>
+                                                    <MudSelectItem Value="@LengthPreference.Long">Long</MudSelectItem>
+                                                </MudSelect>
+                                            </MudItem>
+                                            <MudItem xs="12" sm="6" md="6">
+                                                <MudSelect T="WeightPreference" Label="Weight Preference" @bind-Value="selectedWeightPreference">
+                                                    <MudSelectItem Value="@WeightPreference.Any">Any</MudSelectItem>
+                                                    <MudSelectItem Value="@WeightPreference.Light">Light</MudSelectItem>
+                                                    <MudSelectItem Value="@WeightPreference.Medium">Medium</MudSelectItem>
+                                                    <MudSelectItem Value="@WeightPreference.Heavy">Heavy</MudSelectItem>
+                                                </MudSelect>
+                                            </MudItem>
+                                            <MudFlexBreak />
+                                            <MudItem xs="12" sm="4" md="4">
+                                                <MudCheckBox @bind-Value="@preferences.FullAutoRated" Label="Full Auto Rated" Color="Color.Primary"></MudCheckBox>
+                                            </MudItem>
+                                            <MudItem xs="12" sm="4" md="4">
+                                                <MudCheckBox @bind-Value="@preferences.MagnumRated" Label="Magnum Rated" Color="Color.Primary"></MudCheckBox>
+                                            </MudItem>
+                                            <MudItem xs="12" sm="4" md="4">
+                                                <MudCheckBox @bind-Value="@preferences.PistonCompatible" Label="Piston Compatible" Color="Color.Primary"></MudCheckBox>
+                                            </MudItem>
+                                        </MudGrid>
+                                    </MudCardContent>
+                                </MudCard>
+                            </ChildContent>
+                        </MudExpansionPanel>
 
-                </MudItem>
+                    </MudItem>
+
+                }
             </MudGrid>
-            @if (MinimumRequirementsMet)
-            {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-8" OnClick="FindMatches">Find Matches</MudButton>
-            }
+            <MudButton Disabled="!MinimumRequirementsMet" Variant="Variant.Filled" Color="Color.Primary" Class="mt-8" OnClick="FindMatches">Find Matches</MudButton>
         </MudForm>
 
         @if (matchingSilencers != null && matchingSilencers.Any())
@@ -171,7 +188,6 @@
     private List<Silencer>? matchingSilencers;
 
     private List<string> calibers = new();
-    private List<string> classes = new();
     private List<string> manufacturers = new();
     private List<string> materials = new();
 
@@ -181,6 +197,10 @@
     private bool MinimumRequirementsMet { get; set; } = false;
 
 
+    private List<string> groupedClasses = new();
+    private List<string> subClasses = new();
+    private string selectedClass = "Any";
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -188,12 +208,13 @@
             var silencers = await SilencerDataService.GetSilencerDataAsync();
             allSilencers = silencers.ToList();
 
+            var matcher = new SilencerMatcher(allSilencers);
+
             calibers = allSilencers.Select(s => s.Caliber).Distinct().OrderBy(c => c).ToList();
-            classes = allSilencers.SelectMany(s => s.Class.Split(", ")).Distinct().OrderBy(c => c).ToList();
+            groupedClasses = matcher.GetGroupedClasses();
             manufacturers = allSilencers.Select(s => s.Manufacturer).Distinct().OrderBy(m => m).ToList();
             materials = allSilencers.Select(s => s.TubeMaterial).Distinct().OrderBy(m => m).ToList();
             CheckMinimumRequirements();
-
         }
         catch (Exception ex)
         {
@@ -204,6 +225,22 @@
             isLoading = false;
             StateHasChanged();
         }
+    }
+
+    private async Task OnClassSelectionChanged()
+    {
+        if (selectedClass != "Any")
+        {
+            var matcher = new SilencerMatcher(allSilencers);
+            subClasses = matcher.GetSubClasses(selectedClass);
+            preferences.Class = selectedClass;
+        }
+        else
+        {
+            subClasses.Clear();
+            preferences.Class = "Any";
+        }
+        CheckMinimumRequirements();
     }
 
     private void FindMatches()
