@@ -1,4 +1,5 @@
 ﻿@using SilencerData.Client.Pages.Components
+@using MudBlazor.Services
 @inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
 @inject ThemeState ThemeState
@@ -11,33 +12,35 @@
 <MudLayout>
     <CascadingValue Value="@_isDarkMode"> 
         <MudAppBar>
-           @*  @if (_drawerOpen)
+            @if (_drawerOpen)
             {
                 <MudIconButton Icon="@Icons.Material.Filled.Close" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             }
             else
             {
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="@Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            } *@
+            }
+            <MudSpacer />
             <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
                 <SilencerDataLogo Width="20vw" Class="fade-in breakpoint-transition" Style="max-width: 250px;"/>
+                <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true">
+                    <NavMenu />
+                </MudDrawer>
             </MudHidden>
             <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
                     <SilencerDataLogo Width="35vw" Class="fade-in breakpoint-transition"  />
+                <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always" Variant="@DrawerVariant.Temporary">
+                    <NavMenu />
+                </MudDrawer>
             </MudHidden>
-
             <MudSpacer />
             <div class="mx-2">
                 <DarkModeToggle ToggledChanged="@OnDarkModeToggled" />
             </div>
         </MudAppBar>
-        @* <MudDrawer @bind-Open="@_drawerOpen">
-            <NavMenu/>
-        </MudDrawer> *@
         <MudMainContent Class="d-flex flex-column" Style="min-height: 100vh;">
             <div class="flex-grow-1 pa-4 fade-in">
                 @Body
-            
             </div>
             <FooterLayout />
         </MudMainContent>
